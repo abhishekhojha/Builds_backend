@@ -107,7 +107,7 @@ userSchema.methods.generateToken = function () {
     if (!this.isVerified) {
         throw new Error('User is not verified');
     }
-    const token = jwt.sign({ id: this._id }, SecretToken, { expiresIn: 86400 }); // 1 day expiry
+    const token = jwt.sign({ id: this._id, role: this.role }, SecretToken, { expiresIn: 86400 }); // 1 day expiry
     return token;
 };
 

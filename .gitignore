@@ -1,0 +1,33 @@
+# Node.js specific
+node_modules/
+npm-debug.log*
+yarn-error.log
+.pnp.js
+
+# Editor config files
+*.swp
+*.bak
+*.tmp
+*.log
+
+# IDE specific files
+.DS_Store
+*.idea
+*.vscode
+
+# Package manager lock files
+yarn.lock
+package-lock.json
+
+# Build output and cache
+dist/
+build/
+coverage/
+*.log
+*.pid
+
+# Secrets and sensitive data
+secrets.json
+config.json
+.env*
+.gitkeep

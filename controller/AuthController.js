@@ -70,7 +70,7 @@ async function VerifyOTP(req, res) {
 };
 
 // Login User
-exports.login = async (req, res) => {
+async function Login(req, res) {
     const { email, password } = req.body;
 
     try {
@@ -95,4 +95,4 @@ exports.login = async (req, res) => {
         res.status(500).json({ message: "Error during login", error });
     }
 };
-module.exports = { SendOtp, VerifyOTP }
+module.exports = { SendOtp, VerifyOTP, }

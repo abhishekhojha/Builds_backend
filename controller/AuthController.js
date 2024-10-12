@@ -95,4 +95,4 @@ async function Login(req, res) {
         res.status(500).json({ message: "Error during login", error });
     }
 };
-module.exports = { SendOtp, VerifyOTP, }
+module.exports = { SendOtp, VerifyOTP, Login }

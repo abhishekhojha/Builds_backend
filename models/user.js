@@ -84,7 +84,7 @@ userSchema.methods.comparePassword = function (password, cb) {
 
 // Method to generate OTP for email verification
 userSchema.methods.generateOTP = function () {
-    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
     this.otp = otp;
     this.otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
     return otp;

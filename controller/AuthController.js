@@ -23,11 +23,11 @@ async function SendOtp(req, res) {
             return res.status(400).json({ message: "User with this email is verified" });
         } else if (!ExistingUser.isVerified) {
             const otp = crypto.randomInt(100000, 999999).toString();
-            const otpExpiry = Date.now() + OTP_EXPIRY_TIME;
+            const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
 
         } else {
             const otp = crypto.randomInt(100000, 999999).toString();
-            const otpExpiry = Date.now() + OTP_EXPIRY_TIME;
+            const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
             const newUser = new User({ email, name, password, role, otp, otpExpiry });
             await newUser.save();
             // Send OTP via email
@@ -48,3 +48,24 @@ async function SendOtp(req, res) {
     }
     res.status(500).send("There are some issues while sending issues")
 }
+
+async function VerifyOTP(req, res) {
+    const { email, otp } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        if(user.verifyOTP(otp)){
+            await user.save();
+            res.status(200).json({ message: "OTP verified, signup complete" });
+        }
+        return res.status(400).json({ message: "Invalid or expired OTP" });
+    } catch (error) {
+        res.status(500).json({ message: "Error during OTP verification", error });
+    }
+};
+module.exports = { SendOtp, VerifyOTP }

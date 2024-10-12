@@ -68,4 +68,31 @@ async function VerifyOTP(req, res) {
         res.status(500).json({ message: "Error during OTP verification", error });
     }
 };
+
+// Login User
+exports.login = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        if (!user.isVerified) {
+            return res.status(400).json({ message: "Account is not verified. Please verify your OTP." });
+        }
+
+        // Compare password
+        user.comparePassword(data.password, (err,isMatch) => {
+            if(err || !isMatch)
+                return res.status(401).json({message:"Password did not matched"})
+            const Token = userExists.generateToken()
+            return res.status(201).json({message:"Login Successful",token:Token})
+        })
+    } catch (error) {
+        res.status(500).json({ message: "Error during login", error });
+    }
+};
 module.exports = { SendOtp, VerifyOTP }

@@ -13,8 +13,8 @@ const transporter = nodemailer.createTransport({
     }
 });
 async function SendOtp(req, res) {
-    const { email, name, password } = req.body;
-    if (!email || !name || !password) {
+    const { email, name, password, role } = req.body;
+    if (!email || !name || !password || role) {
         return res.status(400).json({ message: "All fields are required: email, otp, name, password, and role." });
     }
     try {
@@ -28,7 +28,7 @@ async function SendOtp(req, res) {
         } else {
             const otp = crypto.randomInt(100000, 999999).toString();
             const otpExpiry = Date.now() + OTP_EXPIRY_TIME;
-            const newUser = new User({ email, name, password, otp, otpExpiry });
+            const newUser = new User({ email, name, password, role, otp, otpExpiry });
             await newUser.save();
             // Send OTP via email
             const mailOptions = {

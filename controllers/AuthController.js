@@ -24,7 +24,6 @@ async function SendOtp(req, res) {
         } else if (!ExistingUser.isVerified) {
             const otp = crypto.randomInt(100000, 999999).toString();
             const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
-
         } else {
             const otp = crypto.randomInt(100000, 999999).toString();
             const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
@@ -58,7 +57,6 @@ async function VerifyOTP(req, res) {
         if (!user) {
             return res.status(400).json({ message: "User not found" });
         }
-
         if(user.verifyOTP(otp)){
             await user.save();
             res.status(200).json({ message: "OTP verified, signup complete" });

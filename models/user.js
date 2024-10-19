@@ -52,6 +52,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    isEmailVerified: { // Field to check if the user's email is verified
+        type: Boolean,
+        default: false
+    },
     isBlocked: { // To block unusual acitve user
         type: Boolean,
         default: false
@@ -110,5 +114,4 @@ userSchema.methods.generateToken = function () {
     const token = jwt.sign({ id: this._id, role: this.role }, SecretToken, { expiresIn: 86400 }); // 1 day expiry
     return token;
 };
-
 module.exports = mongoose.model("User", userSchema);

@@ -7,11 +7,13 @@ app.use(express.json());
 app.use(cors())
 const nodemailer = require("nodemailer")
 const AuthRoute = require("./routes/AuthRoutes")
+const CatagoryRoute = require("./routes/CatagoryRoute")
 const PORT = process.env.PORT || 5000;
 app.get("/", (req, res) => {
     res.send("You are on build's Homepage Go back")
 })
 app.use("/auth",AuthRoute)
+app.use("/catagory",CatagoryRoute)
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI);

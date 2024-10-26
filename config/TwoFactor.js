@@ -7,7 +7,6 @@ const generateAndSendOTP = async (phoneNumber, otpTemplateName = 'OTP1') => {
 
     try {
         const response = await axios.get(url);
-        
         if (response.data.Status === 'Success') {
             const otp = response.data.OTP;
             console.log(`OTP sent to ${phoneNumber}: ${otp}`);

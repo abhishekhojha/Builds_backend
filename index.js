@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
     res.send("You are on build's Homepage Go back")
 })
 app.use("/auth",AuthRoute)
-// app.use("/catagory",CatagoryRoute)
+app.use("/catagories",CatagoryRoute)
 app.use("/",OtpRoute)
 const connectDB = async () => {
     try {

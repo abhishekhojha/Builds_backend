@@ -1,32 +1,34 @@
 const express = require("express");
 const app = express();
-const cors = require("cors")
-require("dotenv").config()
-const mongoose = require("mongoose")
+const cors = require("cors");
+require("dotenv").config();
+const mongoose = require("mongoose");
 app.use(express.json());
-app.use(cors())
-const nodemailer = require("nodemailer")
-const AuthRoute = require("./routes/AuthRoutes")
-const CatagoryRoute = require("./routes/category")
-const OtpRoute = require("./routes/otpRoutes")
+app.use(cors());
+const nodemailer = require("nodemailer");
+const AuthRoute = require("./routes/AuthRoutes");
+const CatagoryRoute = require("./routes/category");
+const CourseRoute = require("./routes/courseRoute");
+const OtpRoute = require("./routes/otpRoutes");
 const PORT = process.env.PORT || 5000;
 app.get("/", (req, res) => {
-    res.send("You are on build's Homepage Go back")
-})
-app.use("/auth",AuthRoute)
-app.use("/catagories",CatagoryRoute)
-app.use("/",OtpRoute)
+  res.send("You are on build's Homepage Go back");
+});
+app.use("/auth", AuthRoute);
+app.use("/catagories", CatagoryRoute);
+app.use("/course", CourseRoute);
+app.use("/", OtpRoute);
 const connectDB = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URI);
-        console.log('MongoDB connected');
-    } catch (error) {
-        console.error(error.message);
-        process.exit(1);
-    }
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("MongoDB connected");
+  } catch (error) {
+    console.error(error.message);
+    process.exit(1);
+  }
 };
 
 app.listen(PORT, () => {
-    console.log("Server is running on port 5000")
-    connectDB()
-})
+  console.log("Server is running on port 5000");
+  connectDB();
+});

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const validator = require("validator");
 const courseSchema = new mongoose.Schema(
   {
     title: {
@@ -46,10 +46,18 @@ const courseSchema = new mongoose.Schema(
         required: true,
       },
     ],
-    active: Boolean,
+    active: {
+      type: Boolean,
+      default: true,
+    },
     duration: {
       type: String,
       required: true,
+      validate(value) {
+        if (!/^\d+ (week|month|year)s?$/.test(value)) {
+          throw new Error("Duration must be a valid time format (e.g., '2 weeks')");
+        }
+      }
     },
     price: {
       normalPrice: {
@@ -64,6 +72,13 @@ const courseSchema = new mongoose.Schema(
         type: String,
         required: true,
         default: "IN",
+        default: "IN",
+        validate(value) {
+          const allowedCurrencies = ["IN", "USD", "EUR", "GBP"];
+          if (!allowedCurrencies.includes(value)) {
+            throw new Error("Invalid currency");
+          }
+        }
       },
       isFree: Boolean,
     },
@@ -94,6 +109,11 @@ const courseSchema = new mongoose.Schema(
             type: String,
             required: true,
             true: true,
+            validate(value) {
+              if (!validator.isURL(value)) {
+                throw new Error("Social link URL is invalid");
+              }
+            }
           },
         },
         description: {
@@ -103,6 +123,11 @@ const courseSchema = new mongoose.Schema(
         imgUrl: {
           type: String,
           trim: true,
+          validate(value) {
+            if (!validator.isURL(value)) {
+              throw new Error("Social link URL is invalid");
+            }
+          }
         },
       },
     ],
@@ -119,17 +144,33 @@ const courseSchema = new mongoose.Schema(
         url: {
           type: String,
           required: true,
+          validate(value) {
+            if (!validator.isURL(value)) {
+              throw new Error("Social link URL is invalid");
+            }
+          }
         },
       },
     ],
+    imgUrl: {
+      type: String,
+      trim: true,
+      validate(value) {
+        if (!validator.isURL(value)) {
+          throw new Error("Social link URL is invalid");
+        }
+      }
+    },
     module: {
       total: {
         type: Number,
         required: true,
+        min: 1
       },
       completed: {
         type: Number,
         required: true,
+        min: 0
       },
     },
   },

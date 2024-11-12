@@ -4,14 +4,14 @@ const { courseValidationRules } = require("../middleware/Validator");
 
 const router = express.Router();
 
-router.post("/", courseValidationRules(), courseController.createCourse);
+router.post("/", hasRole(['admin']), courseValidationRules(), courseController.createCourse);
 
-router.put("/:id", courseValidationRules(), courseController.updateCourse);
+router.put("/:id", hasRole(['admin']), courseValidationRules(), courseController.updateCourse);
 
 router.get("/courses", courseController.getCourses);
 
 router.get("/courses/:id", courseController.getCourseById);
 
-router.delete("/courses/:id", courseController.deleteCourse);
+router.delete("/courses/:id", hasRole(['admin']), courseController.deleteCourse);
 
 module.exports = router;

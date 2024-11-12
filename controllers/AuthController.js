@@ -20,10 +20,7 @@ async function SendOtp(req, res) {
         "hello All fields are required: email, name, password, and role.",
     });
   }
-  return res.status(400).json({
-    message:
-      "hello All fields are required: email, name, password, and role.",
-  });
+  
   try {
     const ExistingUser = await User.findOne({ email });
 

@@ -10,6 +10,9 @@ const AuthRoute = require("./routes/AuthRoutes");
 const CatagoryRoute = require("./routes/category");
 const CourseRoute = require("./routes/courseRoute");
 const OtpRoute = require("./routes/otpRoutes");
+
+import ServerlessHttp from "serverless-http";
+
 const PORT = process.env.PORT || 5000;
 app.get("/", (req, res) => {
   res.send("You are on build's Homepage Go back");
@@ -32,3 +35,15 @@ app.listen(PORT, () => {
   console.log("Server is running on port 5000");
   connectDB();
 });
+app.get('/.netlify/functions/api', (req, res) => {
+  return res.json({
+      messages: "hello world!"
+  })
+})
+
+const handler = ServerlessHttp(app);
+
+module.exports.handler = async(event, context) => {
+    const result = await handler(event, context);
+    return result;
+}

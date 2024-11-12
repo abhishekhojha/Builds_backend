@@ -95,8 +95,9 @@ const userSchema = new mongoose.Schema(
 // Hash the password before saving the user
 userSchema.pre("save", function (next) {
   const user = this;
-  if (!user.isModified("password")) return next();
-
+  if (!user.isModified("password")) {
+    return next();
+  }
   bcrypt.hash(user.password, saltRounds, function (err, hash) {
     if (err) return next(err);
     user.password = hash;
@@ -112,21 +113,10 @@ userSchema.methods.comparePassword = function (password, cb) {
   });
 };
 
-// Method to generate OTP for email verification
-userSchema.methods.generateOTP = function () {
-  const otp = crypto.randomInt(100000, 999999).toString();
-  this.otp = otp;
-  this.otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
-  return otp;
-};
-
 // Method to verify OTP
 userSchema.methods.verifyOTP = function (otp) {
   const now = new Date();
   if (otp === this.otp && now < this.otpExpiry) {
-    this.isVerified = true;
-    this.otp = null; // Clear OTP after verification
-    this.otpExpiry = null; // Clear OTP expiry after verification
     return true;
   }
   return false;

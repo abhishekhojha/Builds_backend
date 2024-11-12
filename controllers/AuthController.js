@@ -45,7 +45,8 @@ async function SendOtp(req, res) {
           text: `Your OTP is ${otp}. It will expire in 10 minutes.`,
         };
 
-        transporter.sendMail(mailOptions);
+        await transporter.sendMail(mailOptions);
+        console.log("otp");
         return res.status(200).json({ message: "OTP sent to email" });
       }
     } else {
@@ -61,7 +62,7 @@ async function SendOtp(req, res) {
         text: `Your OTP is ${otp}. It will expire in 20 minutes.`,
       };
 
-      transporter.sendMail(mailOptions);
+      await transporter.sendMail(mailOptions);
 
       return res.status(200).json({ message: "OTP sent to email" });
     }

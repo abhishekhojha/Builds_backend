@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const Course = require("../models/courseModel");
+const Course = require("../models/Course");
 
 // Create a new course with validation
 exports.createCourse = async (req, res) => {

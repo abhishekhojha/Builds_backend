@@ -117,7 +117,7 @@ async function Login(req, res) {
     }
 
     // Compare password
-    user.comparePassword(data.password, (err, isMatch) => {
+    user.comparePassword(password, (err, isMatch) => {
       if (err || !isMatch)
         return res.status(401).json({ message: "Password did not matched" });
       const Token = userExists.generateToken();

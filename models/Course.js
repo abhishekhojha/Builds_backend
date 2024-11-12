@@ -99,7 +99,7 @@ const courseSchema = new mongoose.Schema(
             }
           },
         },
-        socialLinks: {
+        socialLinks: [{
           title: {
             type: String,
             required: true,
@@ -115,7 +115,7 @@ const courseSchema = new mongoose.Schema(
               }
             }
           },
-        },
+        }],
         description: {
           type: String,
           trim: true,

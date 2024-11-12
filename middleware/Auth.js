@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 exports.hasRole = (role) => {
   return (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];
@@ -19,10 +20,12 @@ exports.hasRole = (role) => {
 
       req.user = decoded;
 
-      if (req.user.role !== role) {
+      if (req.user.role != role) {
         return res.status(403).json({ message: "Forbidden: Access denied" });
       }
-      if(req.user.role == "admin"){
+      console.log(req.user.isVerified);
+      
+      if(req.user.role == "admin" && !req.user.isVerified){
         return res.status(403).json({ message: "Forbidden: Access denied, User is not verified" });
       }
       return next();

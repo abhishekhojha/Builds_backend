@@ -1,6 +1,7 @@
 const express = require("express");
 const courseController = require("../controllers/courseController");
 const { courseValidationRules } = require("../middleware/Validator");
+
 const router = express.Router();
 
 router.post("/", courseValidationRules(), courseController.createCourse);

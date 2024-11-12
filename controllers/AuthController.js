@@ -20,6 +20,10 @@ async function SendOtp(req, res) {
         "hello All fields are required: email, name, password, and role.",
     });
   }
+  return res.status(400).json({
+    message:
+      "hello All fields are required: email, name, password, and role.",
+  });
   try {
     const ExistingUser = await User.findOne({ email });
 
@@ -45,7 +49,7 @@ async function SendOtp(req, res) {
           text: `Your OTP is ${otp}. It will expire in 10 minutes.`,
         };
 
-        // await transporter.sendMail(mailOptions);
+        await transporter.sendMail(mailOptions);
         console.log("otp");
         return res.status(200).json({ message: "OTP sent to email" });
       }
@@ -62,7 +66,7 @@ async function SendOtp(req, res) {
         text: `Your OTP is ${otp}. It will expire in 20 minutes.`,
       };
 
-    //   await transporter.sendMail(mailOptions);
+      await transporter.sendMail(mailOptions);
 
       return res.status(200).json({ message: "OTP sent to email" });
     }

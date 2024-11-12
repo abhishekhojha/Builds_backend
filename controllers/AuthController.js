@@ -46,7 +46,6 @@ async function SendOtp(req, res) {
         };
 
         transporter.sendMail(mailOptions);
-        console.log("otp");
         return res.status(200).json({ message: "OTP sent to email" });
       }
     } else {

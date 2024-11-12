@@ -12,101 +12,49 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASSWORD,
   },
 });
-// async function SendOtp(req, res) {
-//   const { email, name, password, role } = req.body;
-//   if (!email || !name || !password || !role) {
-//     return res.status(400).json({
-//       message:
-//         "hello All fields are required: email, name, password, and role.",
-//     });
-//   }
-
-//   try {
-//     const ExistingUser = await User.findOne({ email });
-
-//     if (ExistingUser && ExistingUser != null) {
-//       if (ExistingUser.isVerified) {
-//         return res
-//           .status(400)
-//           .json({ message: "User with this email is verified" });
-//       } else if (!ExistingUser.isVerified) {
-//         const otp = crypto.randomInt(100000, 999999).toString();
-//         const otpExpiry = new Date(Date.now() + 20 * 60 * 1000);
-//         await User.findByIdAndUpdate(ExistingUser._id, {
-//           isVerified: true,
-//           otp: null,
-//           otpExpiry: null,
-//           role: role
-//         });
-
-//         const mailOptions = {
-//           from: process.env.EMAIL_USER,
-//           to: email,
-//           subject: "Your OTP for Signup",
-//           text: `Your OTP is ${otp}. It will expire in 10 minutes.`,
-//         };
-
-//         await transporter.sendMail(mailOptions);
-//         console.log("otp");
-//         return res.status(200).json({ message: "OTP sent to email" });
-//       }
-//     } else {
-//       const otp = crypto.randomInt(100000, 999999).toString();
-//       const otpExpiry = new Date(Date.now() + 20 * 60 * 1000);
-//       const newUser = new User({ email, name, password, role, otp, otpExpiry });
-//       await newUser.save();
-//       // Send OTP via email
-//       const mailOptions = {
-//         from: process.env.EMAIL_USER,
-//         to: email,
-//         subject: "Your OTP for Signup",
-//         text: `Your OTP is ${otp}. It will expire in 20 minutes.`,
-//       };
-
-//       await transporter.sendMail(mailOptions);
-
-//       return res.status(200).json({ message: "OTP sent to email" });
-//     }
-//   } catch (error) {
-//     return res.status(500).send(error);
-//   }
-
-//   return res.status(500).send("There are some issues while sending issues");
-// }
-
 async function SendOtp(req, res) {
   const { email, name, password, role } = req.body;
-
-  // Check if required fields are missing
   if (!email || !name || !password || !role) {
     return res.status(400).json({
-      message: "All fields are required: email, name, password, and role.",
+      message:
+        "hello All fields are required: email, name, password, and role.",
     });
   }
 
   try {
-    // Check if the user already exists
-    let existingUser = await User.findOne({ email });
+    const ExistingUser = await User.findOne({ email });
 
-    // If user exists and is verified
-    if (existingUser) {
-      if (existingUser.isVerified) {
+    if (ExistingUser && ExistingUser != null) {
+      if (ExistingUser.isVerified) {
         return res
           .status(400)
-          .json({ message: "User with this email is already verified." });
-      }
+          .json({ message: "User with this email is verified" });
+      } else if (!ExistingUser.isVerified) {
+        const otp = crypto.randomInt(100000, 999999).toString();
+        const otpExpiry = new Date(Date.now() + 20 * 60 * 1000);
+        await User.findByIdAndUpdate(ExistingUser._id, {
+          otp: otp,
+          otpExpiry: otpExpiry,
+          role: role
+        });
 
-      // If user exists but is not verified, update them
+        const mailOptions = {
+          from: process.env.EMAIL_USER,
+          to: email,
+          subject: "Your OTP for Signup",
+          text: `Your OTP is ${otp}. It will expire in 10 minutes.`,
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log("otp");
+        return res.status(200).json({ message: "OTP sent to email" });
+      }
+    } else {
       const otp = crypto.randomInt(100000, 999999).toString();
       const otpExpiry = new Date(Date.now() + 20 * 60 * 1000);
-
-      // Use updateOne instead of findByIdAndUpdate to optimize
-      await User.updateOne(
-        { _id: existingUser._id },
-        { $set: { isVerified: true, otp, otpExpiry, role } }
-      );
-
-      // Send OTP email in parallel
+      const newUser = new User({ email, name, password, role, otp, otpExpiry });
+      await newUser.save();
+      // Send OTP via email
       const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
@@ -114,38 +62,15 @@ async function SendOtp(req, res) {
         text: `Your OTP is ${otp}. It will expire in 20 minutes.`,
       };
 
-      transporter.sendMail(mailOptions);
+      await transporter.sendMail(mailOptions);
 
       return res.status(200).json({ message: "OTP sent to email" });
     }
-
-    // If user does not exist, create a new one
-    const otp = crypto.randomInt(100000, 999999).toString();
-    const otpExpiry = new Date(Date.now() + 20 * 60 * 1000);
-
-    const newUser = new User({ email, name, password, role, otp, otpExpiry });
-    await newUser.save();
-
-    // Send OTP email in parallel
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Your OTP for Signup",
-      text: `Your OTP is ${otp}. It will expire in 20 minutes.`,
-    };
-
-    transporter.sendMail(mailOptions);
-
-    return res.status(200).json({ message: "OTP sent to email" });
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .send({
-        message: "Error occurred while sending OTP",
-        error: error.message,
-      });
+    return res.status(500).send(error);
   }
+
+  return res.status(500).send("There are some issues while sending issues");
 }
 
 async function VerifyOTP(req, res) {
@@ -160,7 +85,7 @@ async function VerifyOTP(req, res) {
     // return
     if (user.verifyOTP(otp)) {
       await User.findByIdAndUpdate(user._id, {
-        isVerified: true,
+        isEmailVerified: true,
         otp: null,
         otpExpiry: null,
       });

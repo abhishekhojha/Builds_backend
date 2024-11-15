@@ -23,8 +23,9 @@ exports.hasRole = (role) => {
       if (req.user.role != role) {
         return res.status(403).json({ message: "Forbidden: Access denied" });
       }
-      console.log(req.user.isVerified);
-      
+      if(req.user.isEmailVerified){
+        return res.status(403).json({ message: "Forbidden: Access denied, Email is not verified" });
+      }
       if(req.user.role == "admin" && !req.user.isVerified){
         return res.status(403).json({ message: "Forbidden: Access denied, User is not verified" });
       }

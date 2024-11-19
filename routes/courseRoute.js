@@ -14,4 +14,10 @@ router.get("/courses/:id", courseController.getCourseById);
 
 router.delete("/courses/:id", hasRole(['admin']), courseController.deleteCourse);
 
+// Search Courses by title or description (GET)
+router.get("/courses/search", courseController.searchCourses);
+
+// Sort Courses by Category (GET)
+router.get("/courses/by-category", courseController.sortByCategory);
+
 module.exports = router;

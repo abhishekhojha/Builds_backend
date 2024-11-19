@@ -9,7 +9,6 @@ const nodemailer = require("nodemailer");
 const AuthRoute = require("./routes/AuthRoutes");
 const CatagoryRoute = require("./routes/category");
 const CourseRoute = require("./routes/courseRoute");
-const OtpRoute = require("./routes/otpRoutes");
 
 // import ServerlessHttp from "serverless-http";
 
@@ -20,7 +19,6 @@ app.get("/", (req, res) => {
 app.use("/auth", AuthRoute);
 app.use("/catagories", CatagoryRoute);
 app.use("/course", CourseRoute);
-app.use("/", OtpRoute);
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);

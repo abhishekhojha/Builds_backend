@@ -65,6 +65,66 @@ exports.updateCourse = async (req, res) => {
   }
 };
 
+// Search course 
+exports.searchCourses = async (req, res) => {
+  try {
+    const { searchTerm } = req.query;
+
+    // Validate the search term: it should be a string and at least 3 characters long
+    if (!searchTerm || typeof searchTerm !== 'string' || searchTerm.trim().length < 3) {
+      return res.status(400).json({ error: 'Invalid search term. It must be a string with at least 3 characters.' });
+    }
+
+    // Prepare the search query
+    const regex = new RegExp(searchTerm, 'i'); // Case-insensitive search
+    const query = {
+      $or: [
+        { title: { $regex: regex } },
+        { description: { $regex: regex } }
+      ]
+    };
+
+    // Fetch courses matching the query
+    const courses = await Course.find(query)
+      .populate('categoriesIds') // Populate category details if needed
+      .populate('teachers') // Populate teachers details if needed
+      .sort({ createdAt: -1 }); // Sort by creation date
+
+    // Return the courses found
+    return res.status(200).json({ courses });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'An error occurred while searching for courses.' });
+  }
+};
+
+// Courses by category
+exports.sortByCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.query;
+
+    // Validate categoryId: ensure it's a valid ObjectId
+    if (!categoryId || !mongoose.Types.ObjectId.isValid(categoryId)) {
+      return res.status(400).json({ error: 'Invalid category ID.' });
+    }
+
+    // Create query object to filter by category
+    const query = { categoriesIds: mongoose.Types.ObjectId(categoryId) };
+
+    // Fetch courses filtered by category
+    const courses = await Course.find(query)
+      .populate('categoriesIds') // Populate category details if needed
+      .populate('teachers') // Populate teachers details if needed
+      .sort({ createdAt: -1 }); // Sort by creation date
+
+    // Return the filtered courses
+    res.status(200).json({ courses });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while fetching courses by category.' });
+  }
+};
+
 // Delete a course by ID
 exports.deleteCourse = async (req, res) => {
   try {

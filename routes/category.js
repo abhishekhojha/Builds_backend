@@ -1,5 +1,5 @@
 const express = require('express');
-const { createCategory, getAllCategories, getCategoryById, updateCategory, deleteCategory } = require('../controllers/categoryController');
+const { createCategory,searchCourses, sortByCategory, getAllCategories, getCategoryById, updateCategory, deleteCategory } = require('../controllers/categoryController');
 
 const { hasRole } = require('../middleware/Auth');
 
@@ -13,6 +13,12 @@ router.get('/', getAllCategories);
 
 // // Route to get a category by ID (accessible by all roles, with subcategories)
 router.get('/:id', getCategoryById);
+
+// Search Courses by title or description (GET)
+router.get('/courses/search', searchCourses);
+
+// Sort Courses by Category (GET)
+router.get('/courses/by-category', sortByCategory);
 
 // // Route to update a category (only admins can update)
 router.put('/:id', hasRole(['admin']),updateCategory);

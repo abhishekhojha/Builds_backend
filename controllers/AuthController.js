@@ -78,7 +78,7 @@ async function VerifyOTP(req, res) {
 
   try {
     const user = await User.findOne({ email });
-
+    console.log(user)
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
@@ -110,7 +110,7 @@ async function Login(req, res) {
       return res.status(400).json({ message: "User not found" });
     }
 
-    if (!user.isVerified) {
+    if (!user.isEmailVerified) {
       return res
         .status(400)
         .json({ message: "Account is not verified. Please verify your OTP." });

@@ -4,7 +4,7 @@ const router = express.Router();
 const { hasRole } = require('../middleware/Auth');
 
 // Create a feedback form with questions
-router.post('/create',hasRole(['student']), feedbackController.createFeedbackForm);
+router.post('/create',hasRole(['admin']), feedbackController.createFeedbackForm);
 
 // Get a feedback form by ID
 router.get('/:id',hasRole(['student']), feedbackController.getFeedbackForm);

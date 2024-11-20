@@ -32,6 +32,7 @@ exports.submitFeedbackResponse = async (req, res) => {
     // Create a new response document
     const feedbackResponse = new Response({
       feedbackId,
+      user: req.user._id,
       responses
     });
 

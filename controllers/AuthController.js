@@ -25,11 +25,11 @@ async function SendOtp(req, res) {
     const ExistingUser = await User.findOne({ email });
 
     if (ExistingUser && ExistingUser != null) {
-      if (ExistingUser.isVerified) {
+      if (ExistingUser.isEmailVerified) {
         return res
           .status(400)
           .json({ message: "User with this email is verified" });
-      } else if (!ExistingUser.isVerified) {
+      } else if (!ExistingUser.isEmailVerified) {
         const otp = crypto.randomInt(100000, 999999).toString();
         const otpExpiry = new Date(Date.now() + 20 * 60 * 1000);
         await User.findByIdAndUpdate(ExistingUser._id, {

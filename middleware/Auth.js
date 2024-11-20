@@ -19,8 +19,8 @@ exports.hasRole = (role) => {
       }
 
       req.user = decoded;
-      console.log(role)
-      if (req.user.role != role) {
+      console.log(role[0])
+      if (req.user.role != role[0]) {
         return res.status(403).json({ message: "Forbidden: Access denied" });
       }
       if(req.user.isEmailVerified){

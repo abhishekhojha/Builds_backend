@@ -7,7 +7,7 @@ const { hasRole } = require('../middleware/Auth');
 router.post('/create',hasRole(['admin']), feedbackController.createFeedbackForm);
 
 // Get a feedback form by ID
-router.get('/:id',hasRole(['student']), feedbackController.getFeedbackForm);
+router.get('/:id', feedbackController.getFeedbackForm);
 
 // Submit a feedback response
 router.post('/submit',hasRole(['student']), feedbackController.submitFeedbackResponse);

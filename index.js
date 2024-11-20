@@ -11,6 +11,7 @@ const CatagoryRoute = require("./routes/category");
 const CourseRoute = require("./routes/courseRoute");
 const OrderRoute = require("./routes/OrderRoute");
 const FeedbackForm = require("./routes/FeedbackRoute")
+const Me = require("./routes/Me")
 // import ServerlessHttp from "serverless-http";
 
 const PORT = process.env.PORT || 5000;
@@ -22,6 +23,8 @@ app.use("/catagories", CatagoryRoute);
 app.use("/course", CourseRoute);
 app.use("/order", OrderRoute);
 app.use("/feedback", FeedbackForm);
+app.use("/", Me);
+
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const feedbackFormSchema = new mongoose.Schema({
-  title: { type: String, required: true }, // Title of the feedback form
+  title: { type: String, required: true }, // Title  of the feedback form
   questions: [
     {
       question: { type: String, required: true }, // The question text

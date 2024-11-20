@@ -124,10 +124,10 @@ userSchema.methods.verifyOTP = function (otp) {
 
 // Method to generate JWT token
 userSchema.methods.generateToken = function () {
-  if (!this.isVerified) {
+  if (!this.isEmailVerified) {
     throw new Error("User is not verified");
   }
-  const token = jwt.sign({ id: this._id, role: this.role, isVerified: this.isVerified }, SecretToken, {
+  const token = jwt.sign({ id: this._id, role: this.role, isVerified: this.isVerified , isEmailVerified: this.isEmailVerified}, SecretToken, {
     expiresIn: 86400,
   }); // 1 day expiry
   return token;

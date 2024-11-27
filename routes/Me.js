@@ -7,6 +7,7 @@ router.get('/me', verifyToken, async (req, res) => {
     const user = req.user;
 
     res.status(200).send({
+      _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,

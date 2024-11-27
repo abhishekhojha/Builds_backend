@@ -12,7 +12,7 @@ const verifyToken = async (req, res, next) => {
 
     const decoded = jwt.verify(token, SecretToken);
 
-    const user = await User.findById(decoded.id);
+    const user = await User.findById(decoded.id).populate("courses")
 
     if (!user) {
       return res.status(404).send({ message: 'User not found' });

@@ -116,7 +116,7 @@ userSchema.methods.comparePassword = function (password, cb) {
 // Method to verify OTP
 userSchema.methods.verifyOTP = function (otp) {
   const now = new Date();
-  if (otp === this.otp && now < this.otpExpiry) {
+  if (otp == this.otp && now < this.otpExpiry) {
     return true;
   }
   return false;

@@ -20,7 +20,7 @@ const createOrder = async (req, res) => {
     }
 
     // Calculate the amount (assuming amount is in cents)
-    const amount = course.salePrice * 100; // Razorpay expects amount in paise (1 = 0.01 INR)
+    const amount = course.price.salePrice * 100; // Razorpay expects amount in paise (1 = 0.01 INR)
 
     // Create order in Razorpay
     const options = {

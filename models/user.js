@@ -49,11 +49,9 @@ const userSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         registrationDate: {
           type: Date,
-          required: true,
         },
         expirationDate: {
           type: Date,
-          required: true,
         },
         ref: "Course",
       },

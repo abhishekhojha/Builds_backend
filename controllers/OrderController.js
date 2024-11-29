@@ -1,7 +1,7 @@
 const Order = require("../models/Order");
 const Razorpay = require("razorpay");
-const Course = require("../models/Course"); 
-const User = require("../models/user"); 
+const Course = require("../models/Course");
+const User = require("../models/user");
 
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -81,7 +81,13 @@ const verifyPayment = async (req, res) => {
       order.razorpayPaymentId = paymentId;
       order.paymentDate = new Date();
       await order.save();
-
+      const registrationDate = new Date();
+      await User.findByIdAndUpdate(order.user, {
+        $push: {
+          courses: order.course,
+          registrationDate:registrationDate
+        },
+      });
       res.status(200).json({ success: true, message: "Payment Successful" });
     } else {
       // If payment is not captured

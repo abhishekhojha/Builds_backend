@@ -40,3 +40,4 @@ router.post("/", (req, res) => {
     res.status(200).send("Email sent successfully");
   });
 });
+module.exports = router;

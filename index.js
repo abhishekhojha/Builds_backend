@@ -34,7 +34,7 @@ app.use("/leaderboard",LeaderboardRoutes);
 app.use("/submission",SubmissionRoutes);
 app.use("/blogRoutes",BlogRoutes);
 app.use("/contact",contactRoute);
-console.log(Date.now())
+// console.log(Date.now())
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
@@ -49,15 +49,3 @@ app.listen(PORT, () => {
   console.log("Server is running on port 5000");
   connectDB();
 });
-// app.get('/.netlify/functions/api', (req, res) => {
-//   return res.json({
-//       messages: "hello world!"
-//   })
-// })
-
-// const handler = ServerlessHttp(app);
-
-// module.exports.handler = async(event, context) => {
-//     const result = await handler(event, context);
-//     return result;
-// }

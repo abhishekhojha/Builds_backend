@@ -55,9 +55,11 @@ const courseSchema = new mongoose.Schema(
       required: true,
       validate(value) {
         if (!/^\d+ (week|month|year)s?$/.test(value)) {
-          throw new Error("Duration must be a valid time format (e.g., '2 weeks')");
+          throw new Error(
+            "Duration must be a valid time format (e.g., '2 weeks')"
+          );
         }
-      }
+      },
     },
     price: {
       normalPrice: {
@@ -78,7 +80,7 @@ const courseSchema = new mongoose.Schema(
           if (!allowedCurrencies.includes(value)) {
             throw new Error("Invalid currency");
           }
-        }
+        },
       },
       isFree: Boolean,
     },
@@ -99,23 +101,25 @@ const courseSchema = new mongoose.Schema(
             }
           },
         },
-        socialLinks: [{
-          title: {
-            type: String,
-            required: true,
-            true: true,
+        socialLinks: [
+          {
+            title: {
+              type: String,
+              required: true,
+              true: true,
+            },
+            url: {
+              type: String,
+              required: true,
+              true: true,
+              validate(value) {
+                if (!validator.isURL(value)) {
+                  throw new Error("Social link URL is invalid");
+                }
+              },
+            },
           },
-          url: {
-            type: String,
-            required: true,
-            true: true,
-            validate(value) {
-              if (!validator.isURL(value)) {
-                throw new Error("Social link URL is invalid");
-              }
-            }
-          },
-        }],
+        ],
         description: {
           type: String,
           trim: true,
@@ -127,7 +131,7 @@ const courseSchema = new mongoose.Schema(
             if (!validator.isURL(value)) {
               throw new Error("Social link URL is invalid");
             }
-          }
+          },
         },
       },
     ],
@@ -148,7 +152,7 @@ const courseSchema = new mongoose.Schema(
             if (!validator.isURL(value)) {
               throw new Error("Social link URL is invalid");
             }
-          }
+          },
         },
       },
     ],
@@ -159,18 +163,27 @@ const courseSchema = new mongoose.Schema(
         if (!validator.isURL(value)) {
           throw new Error("Social link URL is invalid");
         }
-      }
+      },
     },
     module: {
       total: {
         type: Number,
         required: true,
-        min: 1
+        min: 1,
       },
       completed: {
         type: Number,
         required: true,
-        min: 0
+        min: 0,
+      },
+    },
+    streamUrl: {
+      type: String,
+      trim: true,
+      validate(value) {
+        if (value && !validator.isURL(value)) {
+          throw new Error("Stream URL is invalid");
+        }
       },
     },
   },

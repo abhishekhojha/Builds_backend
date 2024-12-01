@@ -15,6 +15,11 @@ exports.courseValidationRules = () => [
     .isLength({ max: 1000 })
     .withMessage("Description should not exceed 1000 characters"),
 
+  check("streamUrl")
+    .optional()
+    .isURL()
+    .withMessage("Stream URL must be a valid URL"),
+
   body("teachers")
     .isArray({ min: 1 })
     .withMessage("At least one teacher is required")

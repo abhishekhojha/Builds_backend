@@ -26,9 +26,9 @@ exports.createExam = async (req, res) => {
     });
 
     await exam.save();
-    res.status(201).json({ message: 'Exam created successfully', exam });
+    return res.status(201).json({ message: 'Exam created successfully', exam });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create exam', details: error.message });
+    return res.status(500).json({ error: 'Failed to create exam', details: error.message });
   }
 };
 
@@ -36,9 +36,9 @@ exports.createExam = async (req, res) => {
 exports.getAllExams = async (req, res) => {
   try {
     const exams = await Exam.find();
-    res.status(200).json(exams);
+    return res.status(200).json(exams);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch exams', details: error.message });
+    return res.status(500).json({ error: 'Failed to fetch exams', details: error.message });
   }
 };
 
@@ -54,9 +54,9 @@ exports.getExamById = async (req, res) => {
       return res.status(404).json({ error: 'Exam not found' });
     }
 
-    res.status(200).json(exam);
+    return res.status(200).json(exam);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch exam', details: error.message });
+    return res.status(500).json({ error: 'Failed to fetch exam', details: error.message });
   }
 };
 
@@ -72,9 +72,9 @@ exports.updateExam = async (req, res) => {
       return res.status(404).json({ error: 'Exam not found' });
     }
 
-    res.status(200).json({ message: 'Exam updated successfully', updatedExam });
+    return res.status(200).json({ message: 'Exam updated successfully', updatedExam });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to update exam', details: error.message });
+    return res.status(500).json({ error: 'Failed to update exam', details: error.message });
   }
 };
 
@@ -90,8 +90,8 @@ exports.deleteExam = async (req, res) => {
       return res.status(404).json({ error: 'Exam not found' });
     }
 
-    res.status(200).json({ message: 'Exam deleted successfully' });
+    return res.status(200).json({ message: 'Exam deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to delete exam', details: error.message });
+    return res.status(500).json({ error: 'Failed to delete exam', details: error.message });
   }
 };

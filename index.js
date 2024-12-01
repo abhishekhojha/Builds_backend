@@ -16,6 +16,7 @@ const ExamRoute = require("./routes/examRoute")
 const LeaderboardRoutes = require("./routes/leaderboardRoutes")
 const SubmissionRoutes = require("./routes/submissionRoutes")
 const BlogRoutes = require("./routes/BlogRoutes")
+const contactRoute = require("./routes/contactRoute")
 // import ServerlessHttp from "serverless-http";
 
 const PORT = process.env.PORT || 5000;
@@ -32,6 +33,7 @@ app.use("/exam",ExamRoute);
 app.use("/leaderboard",LeaderboardRoutes);
 app.use("/submission",SubmissionRoutes);
 app.use("/blogRoutes",BlogRoutes);
+app.use("/contact",contactRoute);
 console.log(Date.now())
 const connectDB = async () => {
   try {

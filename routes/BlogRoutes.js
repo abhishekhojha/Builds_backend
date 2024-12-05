@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllBlog, createBlog, getBlogById, updateBlog, deleteBlog } = require('../controllers/blogController');
+const { getAllBlog, createBlog, getBlogById, getLatestBlog, updateBlog, deleteBlog } = require('../controllers/blogController');
 
 const { hasRole } = require('../middleware/Auth');
 
@@ -10,6 +10,8 @@ router.post('/', hasRole(['admin']), createBlog);
 
 // // Route to get all categories (accessible by all roles, including subcategories)
 router.get('/', getAllBlog);
+router.get('/latest', getLatestBlog);
+
 
 // // Route to get a category by ID (accessible by all roles, with subcategories)
 router.get('/:id', getBlogById);

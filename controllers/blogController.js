@@ -9,6 +9,15 @@ exports.getAllBlog = async (req, res) => {
   }
 };
 
+exports.getLatestBlog = async (req, res) => {
+  try {
+    const posts = await Blog.find().limit(5);
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching categories", error });
+  }
+};
+
 exports.createBlog = async (req, res) => {
   if (!req.body.title || !req.body.content) {
     return res

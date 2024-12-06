@@ -1,6 +1,6 @@
-const Exam = require('../models/exam'); 
-const { validationResult } = require('express-validator');
-
+const Exam = require("../models/exam");
+const { validationResult } = require("express-validator");
+const Submission = require('../models/submmition');
 // Controller to handle validation errors
 const handleValidationErrors = (req, res) => {
   const errors = validationResult(req);
@@ -14,7 +14,8 @@ exports.createExam = async (req, res) => {
   handleValidationErrors(req, res);
 
   try {
-    const { title, description, startTime, endTime, participants, questions } = req.body;
+    const { title, description, startTime, endTime, participants, questions } =
+      req.body;
 
     const exam = new Exam({
       title,
@@ -26,9 +27,11 @@ exports.createExam = async (req, res) => {
     });
 
     await exam.save();
-    return res.status(201).json({ message: 'Exam created successfully', exam });
+    return res.status(201).json({ message: "Exam created successfully", exam });
   } catch (error) {
-    return res.status(500).json({ error: 'Failed to create exam', details: error.message });
+    return res
+      .status(500)
+      .json({ error: "Failed to create exam", details: error.message });
   }
 };
 
@@ -38,7 +41,9 @@ exports.getAllExams = async (req, res) => {
     const exams = await Exam.find();
     return res.status(200).json(exams);
   } catch (error) {
-    return res.status(500).json({ error: 'Failed to fetch exams', details: error.message });
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch exams", details: error.message });
   }
 };
 
@@ -48,15 +53,20 @@ exports.getExamById = async (req, res) => {
 
   try {
     const { examId } = req.params;
-    const exam = await Exam.findById(examId).populate('participants', 'name email');
+    const exam = await Exam.findById(examId).populate(
+      "participants",
+      "name email"
+    );
 
     if (!exam) {
-      return res.status(404).json({ error: 'Exam not found' });
+      return res.status(404).json({ error: "Exam not found" });
     }
 
     return res.status(200).json(exam);
   } catch (error) {
-    return res.status(500).json({ error: 'Failed to fetch exam', details: error.message });
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch exam", details: error.message });
   }
 };
 
@@ -66,15 +76,21 @@ exports.updateExam = async (req, res) => {
 
   try {
     const { examId } = req.params;
-    const updatedExam = await Exam.findByIdAndUpdate(examId, req.body, { new: true });
+    const updatedExam = await Exam.findByIdAndUpdate(examId, req.body, {
+      new: true,
+    });
 
     if (!updatedExam) {
-      return res.status(404).json({ error: 'Exam not found' });
+      return res.status(404).json({ error: "Exam not found" });
     }
 
-    return res.status(200).json({ message: 'Exam updated successfully', updatedExam });
+    return res
+      .status(200)
+      .json({ message: "Exam updated successfully", updatedExam });
   } catch (error) {
-    return res.status(500).json({ error: 'Failed to update exam', details: error.message });
+    return res
+      .status(500)
+      .json({ error: "Failed to update exam", details: error.message });
   }
 };
 
@@ -87,11 +103,40 @@ exports.deleteExam = async (req, res) => {
     const deletedExam = await Exam.findByIdAndDelete(examId);
 
     if (!deletedExam) {
-      return res.status(404).json({ error: 'Exam not found' });
+      return res.status(404).json({ error: "Exam not found" });
     }
 
-    return res.status(200).json({ message: 'Exam deleted successfully' });
+    return res.status(200).json({ message: "Exam deleted successfully" });
   } catch (error) {
-    return res.status(500).json({ error: 'Failed to delete exam', details: error.message });
+    return res
+      .status(500)
+      .json({ error: "Failed to delete exam", details: error.message });
+  }
+};
+
+exports.getAllExamsByUser = async (req, res) => {
+  try {
+    const userId = req.user._id; 
+    const exams = await Exam.find();
+
+    const examsWithSubmissionStatus = [];
+
+    for (const exam of exams) {
+      const submission = await Submission.findOne({
+        exam: exam._id,
+        participant: userId,
+      });
+
+      examsWithSubmissionStatus.push({
+        ...exam.toObject(), 
+        hasSubmitted: submission ? true : false,
+      });
+    }
+
+    return res.status(200).json(examsWithSubmissionStatus);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch exams", details: error.message });
   }
 };

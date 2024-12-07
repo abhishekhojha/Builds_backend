@@ -116,9 +116,8 @@ exports.deleteExam = async (req, res) => {
 
 exports.getAllExamsByUser = async (req, res) => {
   try {
-    const userId = req.user._id; 
+    const userId = req.user.id; 
     const exams = await Exam.find();
-
     const examsWithSubmissionStatus = [];
 
     for (const exam of exams) {
@@ -126,7 +125,7 @@ exports.getAllExamsByUser = async (req, res) => {
         exam: exam._id,
         participant: userId,
       });
-
+      console.log(submission)
       examsWithSubmissionStatus.push({
         ...exam.toObject(), 
         hasSubmitted: submission ? true : false,

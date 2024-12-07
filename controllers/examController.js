@@ -125,7 +125,6 @@ exports.getAllExamsByUser = async (req, res) => {
         exam: exam._id,
         participant: userId,
       });
-      console.log(submission)
       examsWithSubmissionStatus.push({
         ...exam.toObject(), 
         hasSubmitted: submission ? true : false,

@@ -61,6 +61,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    imgUrl: {
+      type: String,
+      trim: true,
+      validate(value) {
+        if (value && !validator.isURL(value)) {
+          throw new Error("Stream URL is invalid");
+        }
+      },
+    },
     otpExpiry: {
       // Field for storing OTP expiration time
       type: Date,
@@ -125,9 +134,18 @@ userSchema.methods.generateToken = function () {
   if (!this.isEmailVerified) {
     throw new Error("User is not verified");
   }
-  const token = jwt.sign({ id: this._id, role: this.role, isVerified: this.isVerified , isEmailVerified: this.isEmailVerified}, SecretToken, {
-    expiresIn: 86400,
-  }); // 1 day expiry
+  const token = jwt.sign(
+    {
+      id: this._id,
+      role: this.role,
+      isVerified: this.isVerified,
+      isEmailVerified: this.isEmailVerified,
+    },
+    SecretToken,
+    {
+      expiresIn: 86400,
+    }
+  ); // 1 day expiry
   return token;
 };
 module.exports = mongoose.model("User", userSchema);

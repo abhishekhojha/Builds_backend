@@ -15,20 +15,21 @@ exports.courseValidationRules = () => [
     .isLength({ max: 1000 })
     .withMessage("Description should not exceed 1000 characters"),
 
-  body("streamUrl")
-    .optional()
-    .isURL()
-    .withMessage("Stream URL must be a valid URL"),
+  // body("streamUrl")
+  //   .optional()
+  //   .isURL()
+  //   .withMessage("Stream URL must be a valid URL"),
 
-  body("teachers")
-    .isArray({ min: 1 })
-    .withMessage("At least one teacher is required")
-    .custom((teachers) => {
-      if (teachers.some((teacher) => !/^[0-9a-fA-F]{24}$/.test(teacher))) {
-        throw new Error("Each teacher ID must be a valid MongoDB ObjectId");
-      }
-      return true;
-    }),
+  // body("teachers")
+  //   .optional()
+  //   .isArray({ min: 1 })
+  //   .withMessage("At least one teacher is required")
+  //   .custom((teachers) => {
+  //     if (teachers.some((teacher) => !/^[0-9a-fA-F]{24}$/.test(teacher))) {
+  //       throw new Error("Each teacher ID must be a valid MongoDB ObjectId");
+  //     }
+  //     return true;
+  //   }),
 
   body("duration")
     .isString()
@@ -73,37 +74,39 @@ exports.courseValidationRules = () => [
       return true;
     }),
 
-  body("instructors.*.name")
-    .isString()
-    .notEmpty()
-    .withMessage("Instructor name is required")
-    .isLength({ max: 255 })
-    .withMessage("Instructor name should not exceed 255 characters"),
+  // body("instructors.*.name")
+  //   .optional()
+  //   .isString()
+  //   .notEmpty()
+  //   .withMessage("Instructor name is required")
+  //   .isLength({ max: 255 })
+  //   .withMessage("Instructor name should not exceed 255 characters"),
 
-  body("instructors.*.email")
-    .isEmail()
-    .withMessage("Invalid email format")
-    .normalizeEmail(),
+  // body("instructors.*.email")
+  //   .optional()
+  //   .isEmail()
+  //   .withMessage("Invalid email format")
+  //   .normalizeEmail(),
 
-  body("videos.*.name")
-    .isString()
-    .notEmpty()
-    .withMessage("Video name is required")
-    .isLength({ max: 255 })
-    .withMessage("Video name should not exceed 255 characters"),
+  // body("videos.*.name")
+  //   .isString()
+  //   .notEmpty()
+  //   .withMessage("Video name is required")
+  //   .isLength({ max: 255 })
+  //   .withMessage("Video name should not exceed 255 characters"),
 
-  body("videos.*.description")
-    .isString()
-    .notEmpty()
-    .withMessage("Video description is required")
-    .isLength({ max: 500 })
-    .withMessage("Video description should not exceed 500 characters"),
+  // body("videos.*.description")
+  //   .isString()
+  //   .notEmpty()
+  //   .withMessage("Video description is required")
+  //   .isLength({ max: 500 })
+  //   .withMessage("Video description should not exceed 500 characters"),
 
-  body("videos.*.url")
-    .isURL()
-    .withMessage("Video URL must be a valid URL")
-    .isLength({ max: 255 })
-    .withMessage("Video URL should not exceed 255 characters"),
+  // body("videos.*.url")
+  //   .isURL()
+  //   .withMessage("Video URL must be a valid URL")
+  //   .isLength({ max: 255 })
+  //   .withMessage("Video URL should not exceed 255 characters"),
 
   param("id").optional().isMongoId().withMessage("Invalid course ID format"),
 ];

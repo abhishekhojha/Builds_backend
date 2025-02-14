@@ -3,11 +3,11 @@ const Course = require("../models/Course");
 
 // Create a new course with validation
 exports.createCourse = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
+//   const errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     return res.status(400).json({ errors: errors.array() });
+//   }
+  console.log('req.body', req.body)
   try {
     const course = new Course(req.body);
     await course.save();

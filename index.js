@@ -19,7 +19,7 @@ const BlogRoutes = require("./routes/BlogRoutes")
 const contactRoute = require("./routes/contactRoute")
 // import ServerlessHttp from "serverless-http";
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 app.get("/", (req, res) => {
   res.send("You are on build's Homepage Go back");
 });
@@ -46,6 +46,6 @@ const connectDB = async () => {
 };
 
 app.listen(PORT, () => {
-  console.log("Server is running on port 5000");
+  console.log(`Server is running on port ${PORT}`);
   connectDB();
 });

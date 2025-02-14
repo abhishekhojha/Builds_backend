@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 exports.hasRole = (role) => {
   return (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];
-
     if (!token) {
       return res
         .status(401)

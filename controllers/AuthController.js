@@ -23,7 +23,6 @@ async function SendOtp(req, res) {
 
   try {
     const ExistingUser = await User.findOne({ email });
-
     if (ExistingUser && ExistingUser != null) {
       if (ExistingUser.isEmailVerified) {
         return res
@@ -46,7 +45,6 @@ async function SendOtp(req, res) {
         };
 
         await transporter.sendMail(mailOptions);
-        console.log("otp");
         return res.status(200).json({ message: "OTP sent to email" });
       }
     } else {
@@ -78,7 +76,6 @@ async function VerifyOTP(req, res) {
 
   try {
     const user = await User.findOne({ email });
-    console.log(user)
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }

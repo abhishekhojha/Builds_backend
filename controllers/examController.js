@@ -38,7 +38,7 @@ exports.createExam = async (req, res) => {
 // Get all exams
 exports.getAllExams = async (req, res) => {
   try {
-    const exams = await Exam.find();
+    const exams = await Exam.find().populate("participants", "name email");
     return res.status(200).json(exams);
   } catch (error) {
     return res

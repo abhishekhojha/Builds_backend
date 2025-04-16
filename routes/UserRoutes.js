@@ -4,7 +4,8 @@ const User = require("../models/user");
 const { hasRole } = require("../middleware/Auth");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
-
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 require("dotenv").config();
 const transporter = nodemailer.createTransport({
   service: "Gmail",
@@ -61,9 +62,10 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-router.put("/:id", hasRole(["admin"]), async (req, res) => {
-  if (!req.params.id || !req.body.role)
+router.put("update/:id", hasRole(["admin"]), async (req, res) => {
+  if (!req.params.id || !req.body.role) {
     return res.status(400).json({ error: "id and role is required" });
+  }
   try {
     const user = await User.findOneAndUpdate(
       { _id: req.params.id },
@@ -97,8 +99,9 @@ router.get("/search", hasRole(["admin"]), async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-router.put("/forget-password", async (req, res) => {
-  const { email, otp, password } = req.body;
+router.put("/forgot-password", async (req, res) => {
+  const { email, otp } = req.body;
+  let { password } = req.body;
   if (!email) return res.status(400).json({ error: "email is required" });
   try {
     const user = await User.findOne({ email });
@@ -106,10 +109,19 @@ router.put("/forget-password", async (req, res) => {
       return res.status(400).json({ message: "User not found" });
     }
     // return
+    // bcrypt.hash(password, saltRounds, function (err, hash) {
+    //   if (err) return res.status(500).json({ error: err });
+    //   password = hash;
+    // });
+    // let newHash = bcrypt.hash(password, saltRounds, function (err, hash) {
+    //   if (err) return res.status(500).json({ error: err });
+    //   return hash;
+    // });
+    let newHash = bcrypt.hashSync(password, saltRounds);
     if (user.verifyOTP(otp)) {
-      await User.findByIdAndUpdate(user._id, {
+      let updated = await User.findByIdAndUpdate(user._id, {
         isEmailVerified: true,
-        password: password,
+        password: newHash,
       });
       return res.status(200).json({ message: "Password updated" });
     } else {
@@ -118,5 +130,8 @@ router.put("/forget-password", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+router.put("/checks", async (req, res) => {
+  return res.status(200).json({ message: "User is authenticated" });
 });
 module.exports = router;

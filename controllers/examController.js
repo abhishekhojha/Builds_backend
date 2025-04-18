@@ -70,6 +70,7 @@ exports.getExamById = async (req, res) => {
   }
 };
 
+
 // Update an exam
 exports.updateExam = async (req, res) => {
   handleValidationErrors(req, res);
@@ -125,6 +126,7 @@ exports.getAllExamsByUser = async (req, res) => {
         exam: exam._id,
         participant: userId,
       });
+      
       examsWithSubmissionStatus.push({
         ...exam.toObject(), 
         hasSubmitted: submission ? true : false,

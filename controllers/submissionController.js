@@ -68,6 +68,29 @@ exports.submitAnswers = async (req, res) => {
   }
 };
 
+exports.getExams = async (req, res) => {
+  handleValidationErrors(req, res);
+
+  try {
+    const { examId } = req.params;
+    const exam = await Exam.findOne({
+      _id: examId,
+      startTime: { $gte: new Date("2024-11-01") }, // condition 1
+      endTime: { $gt: new Date() }, // condition 2
+    }).populate("participants", "name email");
+
+    if (!exam) {
+      return res.status(404).json({ error: "Exam not found" });
+    }
+
+    return res.status(200).json(exam);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch exam", details: error.message });
+  }
+};
+
 // Fetch all submissions for an exam
 exports.getSubmissionsByExam = async (req, res) => {
   try {
@@ -133,7 +156,7 @@ exports.evaluateMarks = async (req, res) => {
     let maxMarks = exam.questions.length;
 
     exam.questions.forEach((question) => {
-      const submittedAnswer = submission.answers.get(question._id.toString());
+      const submittedAnswer = submission.answers.get(question.questionText);
       if (submittedAnswer === question.correctAnswer) {
         totalMarks++;
       }

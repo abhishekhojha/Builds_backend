@@ -3,9 +3,10 @@ const {
   submitAnswers,
   getSubmissionsByExam,
   getParticipantSubmission,
-  evaluateMarks
+  evaluateMarks,
+  getExams,
 } = require("../controllers/submissionController");
-const { validateEvaluation } = require('../validations/evaluationValidation');
+const { validateEvaluation } = require("../validations/evaluationValidation");
 const { validateSubmission } = require("../validations/submissionValidation");
 
 const router = express.Router();
@@ -16,10 +17,15 @@ router.post("/:examId", validateSubmission, submitAnswers);
 // Get all submissions for an exam
 router.get("/:examId", getSubmissionsByExam);
 
+router.get("/exam/:examId", getExams);
+
 // Get a participant's submission for an exam
 router.get("/:examId/:participantId", getParticipantSubmission);
 
-
 // Evaluate marks for a participant
-router.get('/:examId/:participantId/evaluate', validateEvaluation, evaluateMarks)
+router.get(
+  "/:examId/:participantId/evaluate",
+  validateEvaluation,
+  evaluateMarks
+);
 module.exports = router;

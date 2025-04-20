@@ -117,10 +117,13 @@ async function Login(req, res) {
     user.comparePassword(password, (err, isMatch) => {
       if (err || !isMatch)
         return res.status(401).json({ message: "Password did not matched" });
+      let role = false
+      if("admin" == user.role)
+        role = true;
       const Token = user.generateToken();
       return res
         .status(201)
-        .json({ message: "Login Successful", token: Token });
+        .json({ message: "Login Successful", token: Token , role: role });
     });
   } catch (error) {
     return res.status(500).json({ message: "Error during login", error });

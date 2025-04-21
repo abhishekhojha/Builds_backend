@@ -6,18 +6,38 @@ const { validationResult } = require("express-validator");
 const handleValidationErrors = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    res.status(400).json({ errors: errors.array() });
+    return false; // Signal that validation failed
   }
+  return true; // No validation errors
 };
+
+function sanitizeAnswers(rawAnswers) {
+  const sanitized = {};
+  for (let key in rawAnswers) {
+    const newKey = key.replace(/[“”‘’]/g, (match) => {
+      if (match === '“' || match === '”') return '"';
+      if (match === '‘' || match === '’') return "'";
+      return match;
+    });
+    sanitized[newKey] = rawAnswers[key];
+  }
+  return sanitized;
+}
+
 
 // Submit answers for an exam
 exports.submitAnswers = async (req, res) => {
-  handleValidationErrors(req, res);
+  if (!handleValidationErrors(req, res)) return;
 
   try {
     const { examId } = req.params;
     const { participantId, answers } = req.body;
 
+    const cleanedAnswers = sanitizeAnswers(answers);
+    
+    const answersMap = new Map(Object.entries(cleanedAnswers))
+    const plainObject = Object.fromEntries(answersMap)
     // Fetch the exam
     const exam = await Exam.findById(examId);
     if (!exam) {
@@ -54,15 +74,15 @@ exports.submitAnswers = async (req, res) => {
     const submission = new Submission({
       exam: examId,
       participant: participantId,
-      answers,
+      answers: plainObject,
     });
 
     await submission.save();
-    res
+    return res
       .status(201)
       .json({ message: "Answers submitted successfully", submission });
   } catch (error) {
-    res
+    return res
       .status(500)
       .json({ error: "Failed to submit answers", details: error.message });
   }

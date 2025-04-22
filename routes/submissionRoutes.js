@@ -5,15 +5,18 @@ const {
   getParticipantSubmission,
   evaluateMarks,
   getExams,
+  evaluateAllMarks,
 } = require("../controllers/submissionController");
 const { validateEvaluation } = require("../validations/evaluationValidation");
 const { validateSubmission } = require("../validations/submissionValidation");
+const { hasRole } = require("../middleware/Auth");
 
 const router = express.Router();
 
 // Submit answers
 router.post("/:examId", validateSubmission, submitAnswers);
 
+router.get("/evaluate-all/:examId", hasRole["admin"], evaluateAllMarks);
 // Get all submissions for an exam
 router.get("/:examId", getSubmissionsByExam);
 

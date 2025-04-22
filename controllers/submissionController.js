@@ -201,3 +201,47 @@ exports.evaluateMarks = async (req, res) => {
       .json({ error: "Failed to evaluate marks", details: error.message });
   }
 };
+
+// Evaluate marks for All submissions for exams
+exports.evaluateAllMarks = async (req, res) => {
+  try {
+    const { examId } = req.params;
+
+    // Fetch the exam
+    const exam = await Exam.findById(examId);
+    if (!exam) {
+      return res.status(404).json({ error: "Exam not found" });
+    }
+
+    // Fetch all submissions for the exam
+    const submissions = await Submission.find({ exam: examId }).populate('participant');
+
+    const maxMarks = exam.questions.length;
+    const results = [];
+
+    submissions.forEach((submission) => {
+      let totalMarks = 0;
+
+      exam.questions.forEach((question) => {
+        const submittedAnswer = submission.answers[question.questionText];
+        if (submittedAnswer === question.correctAnswer) {
+          totalMarks++;
+        }
+      });
+
+      results.push({
+        participantId: submission.participant._id,
+        participantName: submission.participant.name, // Optional if you want to include name
+        marks: totalMarks,
+        maxMarks,
+        percentage: ((totalMarks / maxMarks) * 100).toFixed(2),
+      });
+    });
+
+    res.status(200).json({ examId, results });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Failed to evaluate all marks", details: error.message });
+  }
+};

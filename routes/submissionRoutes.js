@@ -9,7 +9,6 @@ const {
 } = require("../controllers/submissionController");
 const { validateEvaluation } = require("../validations/evaluationValidation");
 const { validateSubmission } = require("../validations/submissionValidation");
-const { hasRole } = require("../middleware/Auth");
 
 const router = express.Router();
 

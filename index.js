@@ -46,7 +46,7 @@ const connectDB = async () => {
     process.exit(1);
   }
 };
-// process.env.TZ = "Asia/Calcutta";
+process.env.TZ = "Asia/Calcutta";
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   connectDB();

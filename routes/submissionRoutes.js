@@ -16,7 +16,7 @@ const router = express.Router();
 // Submit answers
 router.post("/:examId", validateSubmission, submitAnswers);
 
-router.get("/evaluate-all/:examId", hasRole["admin"], evaluateAllMarks);
+router.get("/evaluate-all/:examId", hasRole(["admin"]), evaluateAllMarks);
 // Get all submissions for an exam
 router.get("/:examId", getSubmissionsByExam);
 

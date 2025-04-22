@@ -16,15 +16,14 @@ function sanitizeAnswers(rawAnswers) {
   const sanitized = {};
   for (let key in rawAnswers) {
     const newKey = key.replace(/[“”‘’]/g, (match) => {
-      if (match === '“' || match === '”') return '"';
-      if (match === '‘' || match === '’') return "'";
+      if (match === "“" || match === "”") return '"';
+      if (match === "‘" || match === "’") return "'";
       return match;
     });
     sanitized[newKey] = rawAnswers[key];
   }
   return sanitized;
 }
-
 
 // Submit answers for an exam
 exports.submitAnswers = async (req, res) => {
@@ -35,9 +34,9 @@ exports.submitAnswers = async (req, res) => {
     const { participantId, answers } = req.body;
 
     const cleanedAnswers = sanitizeAnswers(answers);
-    
-    const answersMap = new Map(Object.entries(cleanedAnswers))
-    const plainObject = Object.fromEntries(answersMap)
+
+    const answersMap = new Map(Object.entries(cleanedAnswers));
+    const plainObject = Object.fromEntries(answersMap);
     // Fetch the exam
     const exam = await Exam.findById(examId);
     if (!exam) {
@@ -174,14 +173,21 @@ exports.evaluateMarks = async (req, res) => {
     // Calculate marks
     let totalMarks = 0;
     let maxMarks = exam.questions.length;
+    // console.log(exam.questions);
+    // return;
 
+    // exam.questions.forEach((question) => {
+    //   const submittedAnswer = submission.answers.get(question.questionText);
+    //   if (submittedAnswer === question.correctAnswer) {
+    //     totalMarks++;
+    //   }
+    // });
     exam.questions.forEach((question) => {
-      const submittedAnswer = submission.answers.get(question.questionText);
+      const submittedAnswer = submission.answers[question.questionText];
       if (submittedAnswer === question.correctAnswer) {
         totalMarks++;
       }
     });
-
     res.status(200).json({
       participantId,
       examId,

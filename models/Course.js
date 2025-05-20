@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+
 const courseSchema = new mongoose.Schema(
   {
     title: {
@@ -16,7 +17,6 @@ const courseSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true,
       },
     ],
     students: [
@@ -26,18 +26,9 @@ const courseSchema = new mongoose.Schema(
       },
     ],
     seo: {
-      title: {
-        type: String,
-        trim: true,
-      },
-      description: {
-        type: String,
-        trim: true,
-      },
-      keywords: {
-        type: String,
-        trim: true,
-      },
+      title: { type: String, trim: true },
+      description: { type: String, trim: true },
+      keywords: { type: String, trim: true },
     },
     categoriesIds: [
       {
@@ -51,14 +42,15 @@ const courseSchema = new mongoose.Schema(
       default: true,
     },
     duration: {
-      type: String,
-      required: true,
-      validate(value) {
-        if (!/^\d+ (week|month|year)s?$/.test(value)) {
-          throw new Error(
-            "Duration must be a valid time format (e.g., '2 weeks')"
-          );
-        }
+      value: {
+        type: Number,
+        required: true,
+        min: 1,
+      },
+      unit: {
+        type: String,
+        enum: ["day", "week", "month", "year"],
+        required: true,
       },
     },
     price: {
@@ -68,12 +60,9 @@ const courseSchema = new mongoose.Schema(
       },
       salePrice: {
         type: Number,
-        required: true,
       },
       currency: {
         type: String,
-        required: true,
-        default: "IN",
         default: "IN",
         validate(value) {
           const allowedCurrencies = ["IN", "USD", "EUR", "GBP"];
@@ -82,7 +71,10 @@ const courseSchema = new mongoose.Schema(
           }
         },
       },
-      isFree: Boolean,
+      isFree: {
+        type: Boolean,
+        default: false,
+      },
     },
     instructors: [
       {
@@ -97,7 +89,7 @@ const courseSchema = new mongoose.Schema(
           lowercase: true,
           validate(value) {
             if (!validator.isEmail(value)) {
-              throw new Error("email is invalid");
+              throw new Error("Email is invalid");
             }
           },
         },
@@ -106,12 +98,12 @@ const courseSchema = new mongoose.Schema(
             title: {
               type: String,
               required: true,
-              true: true,
+              trim: true,
             },
             url: {
               type: String,
               required: true,
-              true: true,
+              trim: true,
               validate(value) {
                 if (!validator.isURL(value)) {
                   throw new Error("Social link URL is invalid");
@@ -128,8 +120,8 @@ const courseSchema = new mongoose.Schema(
           type: String,
           trim: true,
           validate(value) {
-            if (!validator.isURL(value)) {
-              throw new Error("Social link URL is invalid");
+            if (value && !validator.isURL(value)) {
+              throw new Error("Instructor image URL is invalid");
             }
           },
         },
@@ -137,20 +129,14 @@ const courseSchema = new mongoose.Schema(
     ],
     videos: [
       {
-        name: {
-          type: String,
-          required: true,
-        },
-        description: {
-          type: String,
-          required: true,
-        },
+        name: { type: String, required: true },
+        description: { type: String, required: true },
         url: {
           type: String,
           required: true,
           validate(value) {
             if (!validator.isURL(value)) {
-              throw new Error("Social link URL is invalid");
+              throw new Error("Video URL is invalid");
             }
           },
         },
@@ -160,21 +146,20 @@ const courseSchema = new mongoose.Schema(
       type: String,
       trim: true,
       validate(value) {
-        if (!validator.isURL(value)) {
-          throw new Error("Social link URL is invalid");
+        if (value && !validator.isURL(value)) {
+          throw new Error("Course image URL is invalid");
         }
       },
     },
     module: {
       total: {
         type: Number,
-        required: true,
         min: 1,
       },
       completed: {
         type: Number,
-        required: true,
         min: 0,
+        default: 0,
       },
     },
     streamUrl: {
@@ -185,6 +170,11 @@ const courseSchema = new mongoose.Schema(
           throw new Error("Stream URL is invalid");
         }
       },
+    },
+    status: {
+      type: String,
+      enum: ["draft", "in-progress", "published"],
+      default: "draft",
     },
   },
   { timestamps: true }

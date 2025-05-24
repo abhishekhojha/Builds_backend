@@ -1,6 +1,6 @@
 const Exam = require("../models/exam");
 const { validationResult } = require("express-validator");
-const Submission = require('../models/submmition');
+const Submission = require("../models/submmition");
 // Controller to handle validation errors
 const handleValidationErrors = (req, res) => {
   const errors = validationResult(req);
@@ -38,8 +38,28 @@ exports.createExam = async (req, res) => {
 // Get all exams
 exports.getAllExams = async (req, res) => {
   try {
-    const exams = await Exam.find().populate("participants", "name email");
-    return res.status(200).json(exams);
+    // Extract page and limit from query, with default values
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    // Calculate how many documents to skip
+    const skip = (page - 1) * limit;
+
+    // Fetch paginated exams
+    const exams = await Exam.find()
+      .populate("participants", "name email")
+      .skip(skip)
+      .limit(limit);
+
+    // Get total count for pagination info
+    const totalExams = await Exam.countDocuments();
+
+    return res.status(200).json({
+      exams,
+      currentPage: page,
+      totalPages: Math.ceil(totalExams / limit),
+      totalExams,
+    });
   } catch (error) {
     return res
       .status(500)
@@ -70,7 +90,6 @@ exports.getExamById = async (req, res) => {
   }
 };
 
-
 // Update an exam
 exports.updateExam = async (req, res) => {
   handleValidationErrors(req, res);
@@ -78,12 +97,12 @@ exports.updateExam = async (req, res) => {
   try {
     const { examId } = req.params;
     console.log(req.body);
-    
+
     const updatedExam = await Exam.findByIdAndUpdate(examId, req.body, {
       new: true,
     });
     console.log(updatedExam);
-    
+
     if (!updatedExam) {
       return res.status(404).json({ error: "Exam not found" });
     }
@@ -120,7 +139,7 @@ exports.deleteExam = async (req, res) => {
 
 exports.getAllExamsByUser = async (req, res) => {
   try {
-    const userId = req.user.id; 
+    const userId = req.user.id;
     const exams = await Exam.find({ participants: userId });
     const examsWithSubmissionStatus = [];
 
@@ -129,9 +148,9 @@ exports.getAllExamsByUser = async (req, res) => {
         exam: exam._id,
         participant: userId,
       });
-      
+
       examsWithSubmissionStatus.push({
-        ...exam.toObject(), 
+        ...exam.toObject(),
         hasSubmitted: submission ? true : false,
       });
     }

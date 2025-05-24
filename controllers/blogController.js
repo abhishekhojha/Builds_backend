@@ -2,10 +2,24 @@ const Blog = require("../models/Blog");
 
 exports.getAllBlog = async (req, res) => {
   try {
-    const posts = await Blog.find();
-    res.status(200).json(posts);
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 5; // Default to 5 items per page
+    const skip = (page - 1) * limit;
+
+    const [blogs, total] = await Promise.all([
+      Blog.find().skip(skip).limit(limit),
+      Blog.countDocuments()
+    ]);
+
+    res.status(200).json({
+      blogs,
+      total,
+      page,
+      pages: Math.ceil(total / limit)
+    });
+    
   } catch (error) {
-    res.status(500).json({ message: "Error fetching categories", error });
+    res.status(500).json({ message: "Error fetching blogs", error });
   }
 };
 

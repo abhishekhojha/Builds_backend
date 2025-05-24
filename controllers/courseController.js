@@ -17,7 +17,7 @@ exports.createCourse = async (req, res) => {
     price,
     categoriesIds,
     active,
-    imgUrl
+    imgUrl,
   } = req.body;
 
   try {
@@ -30,7 +30,7 @@ exports.createCourse = async (req, res) => {
       price,
       categoriesIds,
       active,
-      imgUrl
+      imgUrl,
     });
 
     await course.save();
@@ -43,10 +43,21 @@ exports.createCourse = async (req, res) => {
 // Get all courses
 exports.getCourses = async (req, res) => {
   try {
-    const courses = await Course.find().populate(
-      "teachers students categoriesIds"
-    );
-    res.status(200).json(courses);
+    const page = parseInt(req.query.page) || 1; // default to page 1
+    const limit = parseInt(req.query.limit) || 10; // default to 10 per page
+    const skip = (page - 1) * limit;
+
+    const [courses, total] = await Promise.all([
+      Course.find()
+        .populate("teachers students categoriesIds")
+        .skip(skip)
+        .limit(limit),
+      Course.countDocuments(),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    res.status(200).json({ courses, totalPages, currentPage: page });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

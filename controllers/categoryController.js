@@ -37,8 +37,24 @@ exports.createCategory = async (req, res) => {
 
 exports.getAllCategories = async (req, res) => {
   try {
-    const categories = await Category.find({ parentCategory: null }).populate("subcategories");
-    res.status(200).json(categories);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
+    const [categories, total] = await Promise.all([
+      Category.find({ parentCategory: null })
+        .populate("subcategories")
+        .skip(skip)
+        .limit(limit),
+      Category.countDocuments({ parentCategory: null })
+    ]);
+
+    res.status(200).json({
+      categories,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
   } catch (error) {
     res.status(500).json({ message: "Error fetching categories", error });
   }

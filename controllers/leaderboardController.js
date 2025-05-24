@@ -55,13 +55,15 @@ exports.getLeaderboard = async (req, res) => {
     // Sort leaderboard by scores in descending order
     leaderboard.sort((a, b) => b.score - a.score);
 
-    res.status(200).json({ examId, leaderboard });
+    res.status(200).json({
+      examId,
+      examTitle: exam.title,
+      leaderboard,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        error: "Failed to generate leaderboard",
-        details: error.message,
-      });
+    res.status(500).json({
+      error: "Failed to generate leaderboard",
+      details: error.message,
+    });
   }
 };

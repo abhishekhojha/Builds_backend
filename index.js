@@ -10,13 +10,13 @@ const AuthRoute = require("./routes/AuthRoutes");
 const CatagoryRoute = require("./routes/category");
 const CourseRoute = require("./routes/courseRoute");
 const OrderRoute = require("./routes/OrderRoute");
-const FeedbackForm = require("./routes/FeedbackRoute")
-const Me = require("./routes/Me")
-const ExamRoute = require("./routes/examRoute")
-const LeaderboardRoutes = require("./routes/leaderboardRoutes")
-const SubmissionRoutes = require("./routes/submissionRoutes")
-const BlogRoutes = require("./routes/BlogRoutes")
-const contactRoute = require("./routes/contactRoute")
+const FeedbackForm = require("./routes/FeedbackRoute");
+const Me = require("./routes/Me");
+const ExamRoute = require("./routes/examRoute");
+const LeaderboardRoutes = require("./routes/leaderboardRoutes");
+const SubmissionRoutes = require("./routes/submissionRoutes");
+const BlogRoutes = require("./routes/BlogRoutes");
+const contactRoute = require("./routes/contactRoute");
 const UserRoutes = require("./routes/UserRoutes");
 // import ServerlessHttp from "serverless-http";
 
@@ -30,11 +30,11 @@ app.use("/course", CourseRoute);
 app.use("/order", OrderRoute);
 app.use("/feedback", FeedbackForm);
 app.use("/", Me);
-app.use("/exam",ExamRoute);
-app.use("/leaderboard",LeaderboardRoutes);
-app.use("/submission",SubmissionRoutes);
-app.use("/blogRoutes",BlogRoutes);
-app.use("/contact",contactRoute);
+app.use("/exam", ExamRoute);
+app.use("/leaderboard", LeaderboardRoutes);
+app.use("/submission", SubmissionRoutes);
+app.use("/blogRoutes", BlogRoutes);
+app.use("/contact", contactRoute);
 app.use("/users", UserRoutes);
 // console.log(Date.now())
 const connectDB = async () => {

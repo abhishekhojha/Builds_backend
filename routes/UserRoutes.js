@@ -14,9 +14,9 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASSWORD,
   },
 });
-router.get("/", hasRole(["admin"]), async (req, res) => {
+router.get("/", hasRole(["admin", "teacher"]), async (req, res) => {
   let page = parseInt(req.query.page) || 1;
-  let limit = parseInt(req.query.limit) || 20;
+  let limit = parseInt(req.query.limit) || 10;
   let offset = (page - 1) * limit;
   try {
     const users = await User.find({ role: { $ne: "admin" } })
@@ -29,6 +29,8 @@ router.get("/", hasRole(["admin"]), async (req, res) => {
       page: page,
       totalPages: totalPage,
     };
+    console.log(data);
+
     res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });

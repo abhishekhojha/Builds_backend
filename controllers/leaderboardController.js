@@ -33,7 +33,7 @@ exports.getLeaderboard = async (req, res) => {
       const maxMarks = exam.questions.length;
 
       exam.questions.forEach((question) => {
-        const submittedAnswer = submission.answers.get(question._id.toString());
+        const submittedAnswer = submission.answers[question.questionText];
         if (submittedAnswer === question.correctAnswer) {
           totalMarks++;
         }

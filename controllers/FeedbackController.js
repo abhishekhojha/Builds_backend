@@ -29,7 +29,6 @@ exports.getFeedbackForm = async (req, res) => {
 exports.submitFeedbackResponse = async (req, res) => {
   try {
     const { feedbackId, responses } = req.body;
-    console.log(req.user)
 
     // Create a new response document
     const feedbackResponse = new Response({

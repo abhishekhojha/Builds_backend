@@ -96,12 +96,10 @@ exports.updateExam = async (req, res) => {
 
   try {
     const { examId } = req.params;
-    console.log(req.body);
 
     const updatedExam = await Exam.findByIdAndUpdate(examId, req.body, {
       new: true,
     });
-    console.log(updatedExam);
 
     if (!updatedExam) {
       return res.status(404).json({ error: "Exam not found" });

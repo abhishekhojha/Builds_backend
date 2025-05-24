@@ -29,7 +29,6 @@ router.get("/", hasRole(["admin", "teacher"]), async (req, res) => {
       page: page,
       totalPages: totalPage,
     };
-    console.log(data);
 
     res.status(200).json(data);
   } catch (error) {
@@ -81,7 +80,6 @@ router.put("update/:id", hasRole(["admin"]), async (req, res) => {
 });
 router.get("/search", hasRole(["admin"]), async (req, res) => {
   if (!req.query.q) return res.status(400).json({ error: "q is required" });
-  console.log(req.query.q);
   let page = 1;
   let limit = parseInt(req.query.limit) || 20;
   try {

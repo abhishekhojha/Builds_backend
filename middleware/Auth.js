@@ -15,7 +15,6 @@ exports.hasRole = (roles) => {
       }
 
       req.user = decoded;
-      console.log("User Role:", req.user.role);
 
       // Check if user's role is in the allowed roles
       if (!roles.includes(req.user.role)) {

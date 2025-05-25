@@ -16,7 +16,7 @@ router.post(
 router.put(
   "/:id",
   hasRole(["admin"]),
-  courseValidationRules(),
+  validateCreateCourse,
   courseController.updateCourse
 );
 

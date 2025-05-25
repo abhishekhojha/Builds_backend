@@ -79,21 +79,31 @@ router.put("update/:id", hasRole(["admin"]), async (req, res) => {
   }
 });
 router.get("/search", hasRole(["admin"]), async (req, res) => {
-  if (!req.query.q) return res.status(400).json({ error: "q is required" });
+  const { q, role, limit } = req.query;
+
+  if (!q) return res.status(400).json({ error: "email is required" });
+
   let page = 1;
-  let limit = parseInt(req.query.limit) || 20;
+  const limitNum = parseInt(limit) || 20;
+
+  const query = {
+    email: { $regex: q, $options: "i" },
+  };
+
+  if (role) {
+    query.role = role; 
+  }
+
   try {
-    const users = await User.find({
-      email: { $regex: req.query.q, $options: "i" },
-    })
-      .select("-password")
-      .limit(limit);
+    const users = await User.find(query).select("-password").limit(limitNum);
+
     const totalPage = 1;
     const data = {
-      users: users,
-      page: page,
+      users,
+      page,
       totalPages: totalPage,
     };
+
     res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });

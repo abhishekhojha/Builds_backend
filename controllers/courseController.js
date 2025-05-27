@@ -63,6 +63,29 @@ exports.getCourses = async (req, res) => {
   }
 };
 
+// Get published courses
+exports.getPublished = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [courses, total] = await Promise.all([
+      Course.find({ status: 'published' })
+        .populate("teachers students categoriesIds")
+        .skip(skip)
+        .limit(limit),
+      Course.countDocuments({ status: 'published' }),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    res.status(200).json({ courses, totalPages, currentPage: page });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Get a single course by ID with validation
 exports.getCourseById = async (req, res) => {
   try {

@@ -20,7 +20,7 @@ router.put(
   courseController.updateCourse
 );
 
-router.get("/courses", courseController.getCourses);
+router.get("/courses",hasRole(["admin","teacher"]), courseController.getCourses);
 router.get("/publishedcourses", courseController.getPublished);
 
 router.get("/courses/:id", courseController.getCourseById);

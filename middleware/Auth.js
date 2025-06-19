@@ -1,8 +1,9 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 exports.hasRole = (roles) => {
   return (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];
+
     if (!token) {
       return res
         .status(401)
@@ -23,12 +24,16 @@ exports.hasRole = (roles) => {
 
       // Email verification check
       if (!req.user.isEmailVerified) {
-        return res.status(403).json({ message: "Forbidden: Email not verified" });
+        return res
+          .status(403)
+          .json({ message: "Forbidden: Email not verified" });
       }
 
       // Additional check for admin
       if (req.user.role === "admin" && !req.user.isVerified) {
-        return res.status(403).json({ message: "Forbidden: Admin not verified" });
+        return res
+          .status(403)
+          .json({ message: "Forbidden: Admin not verified" });
       }
 
       return next();

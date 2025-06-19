@@ -36,7 +36,7 @@ exports.getFeedbackForm = async (req, res) => {
 exports.getFeedbackResponse = async (req, res) => {
   try {
     const feedbackId = req.params.id;
-    const feedback = await Response.find({ feedbackId })
+    const feedback = await Response.find({ feedbackId }).populate("user")
     if (!feedback) {
       return res.status(404).send({ message: "Feedback Responses not found" });
     }
@@ -74,7 +74,8 @@ exports.deleteFeedbackForm = async (req, res) => {
 exports.submitFeedbackResponse = async (req, res) => {
   try {
     const { feedbackId, responses } = req.body;
-
+    console.log(req.body);
+    
     // Create a new response document
     const feedbackResponse = new Response({
       feedbackId,

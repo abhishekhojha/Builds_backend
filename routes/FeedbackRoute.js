@@ -16,6 +16,9 @@ router.get("/", feedbackController.getAllFeedbacks);
 // Get a feedback form by ID
 router.get("/:id", feedbackController.getFeedbackForm);
 
+// Get a feedback form by ID
+router.get("/response/:id", feedbackController.getFeedbackResponse);
+
 // Update a feedback by id
 router.put("/:id", hasRole(["admin"]), feedbackController.updateFeedbackForm);
 

@@ -38,7 +38,8 @@ app.use("/blogRoutes", BlogRoutes);
 app.use("/contact", contactRoute);
 app.use("/users", UserRoutes);
 app.use('/api/catalog', catalogRoutes);
-
+const userDetailsRoutes = require('./routes/userDetailsRoutes');
+app.use('/api', userDetailsRoutes);
 // console.log(Date.now())
 const connectDB = async () => {
   try {

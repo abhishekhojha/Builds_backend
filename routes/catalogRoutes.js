@@ -7,9 +7,10 @@ const {
     updateCatalog,
     deleteCatalog,
 } = require('../controllers/catalogController');
+const { hasRole } = require('../middleware/Auth');
 
 // POST /api/catalog
-router.post('/', createCatalog);
+router.post('/', hasRole(["admin"]), createCatalog);
 
 // GET all catalogs
 router.get('/', getCatalogs);
@@ -18,9 +19,9 @@ router.get('/', getCatalogs);
 router.get('/:id', getCatalogById);
 
 // PUT update catalog
-router.put('/:id', updateCatalog);
+router.put('/:id', hasRole(["admin"]), updateCatalog);
 
 // DELETE catalog
-router.delete('/:id', deleteCatalog);
+router.delete('/:id', hasRole(["admin"]), deleteCatalog);
 
 module.exports = router;

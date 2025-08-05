@@ -36,13 +36,15 @@ exports.getFeedbackForm = async (req, res) => {
 exports.getFeedbackResponse = async (req, res) => {
   try {
     const feedbackId = req.params.id;
-    const feedback = await Response.find({ feedbackId }).populate("user")
+    const feedback = await Response.find({ feedbackId }).populate("user");
     if (!feedback) {
       return res.status(404).send({ message: "Feedback Responses not found" });
     }
     res.status(200).json(feedback);
   } catch (error) {
-    res.status(500).send({ message: "Error fetching feedback Responses", error });
+    res
+      .status(500)
+      .send({ message: "Error fetching feedback Responses", error });
   }
 };
 exports.updateFeedbackForm = async (req, res) => {
@@ -74,8 +76,7 @@ exports.deleteFeedbackForm = async (req, res) => {
 exports.submitFeedbackResponse = async (req, res) => {
   try {
     const { feedbackId, responses } = req.body;
-    console.log(req.body);
-    
+
     // Create a new response document
     const feedbackResponse = new Response({
       feedbackId,

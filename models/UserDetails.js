@@ -1,28 +1,31 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const userDetailsSchema = new mongoose.Schema({
+const userDetailsSchema = new mongoose.Schema(
+  {
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     age: {
-        type: Number,
-        min: 0
+      type: Number,
+      min: 0,
     },
     contact: {
-        type: String
+      type: String,
     },
     city: {
-        type: String
+      type: String,
     },
     state: {
-        type: String
+      type: String,
     },
     status: {
-        type: String,
-        enum: ['student', 'employee', 'other']
-    }
-}, { timestamps: true });
+      type: String,
+      enum: ["student", "employee", "others"],
+    },
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('UserDetails', userDetailsSchema);
+module.exports = mongoose.model("UserDetails", userDetailsSchema);

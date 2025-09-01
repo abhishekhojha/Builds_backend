@@ -105,7 +105,8 @@ async function SignUp(req, res) {
       message: "All fields are required: email, name, password, and role.",
     });
   }
-
+  console.log(email, name, password, role);
+  
   try {
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -114,7 +115,7 @@ async function SignUp(req, res) {
         .status(400)
         .json({ message: "User with this email already exists" });
     }
-
+    
     // Create new user with verified email
     const newUser = new User({
       email,

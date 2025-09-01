@@ -59,7 +59,7 @@ const userSchema = new mongoose.Schema(
     otp: {
       // Field for storing the OTP
       type: String,
-      required: true,
+      required: false,
     },
     imgUrl: {
       type: String,
@@ -73,7 +73,7 @@ const userSchema = new mongoose.Schema(
     otpExpiry: {
       // Field for storing OTP expiration time
       type: Date,
-      required: true,
+      required: false,
     },
     isVerified: {
       // Field to check if the user is verified

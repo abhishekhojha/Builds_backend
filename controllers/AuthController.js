@@ -121,7 +121,9 @@ async function SignUp(req, res) {
       name,
       password,
       role,
-      isEmailVerified: true, // ✅ No OTP required
+      isEmailVerified: true,
+      otp: "000000", // dummy
+      otpExpiry: new Date(), // dummy (expired immediately)
     });
 
     await newUser.save();
@@ -163,7 +165,7 @@ async function Login(req, res) {
       const Token = user.generateToken();
       return res
         .status(201)
-        .json({ message: "Login Successful", token: Token , role: user.role });
+        .json({ message: "Login Successful", token: Token, role: user.role });
     });
   } catch (error) {
     return res.status(500).json({ message: "Error during login", error });

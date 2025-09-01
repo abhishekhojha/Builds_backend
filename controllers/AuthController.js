@@ -96,6 +96,49 @@ async function VerifyOTP(req, res) {
   }
 }
 
+
+async function SignUp(req, res) {
+  const { email, name, password, role } = req.body;
+
+  if (!email || !name || !password || !role) {
+    return res.status(400).json({
+      message: "All fields are required: email, name, password, and role.",
+    });
+  }
+
+  try {
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ message: "User with this email already exists" });
+    }
+
+    // Create new user with verified email
+    const newUser = new User({
+      email,
+      name,
+      password,
+      role,
+      isEmailVerified: true, // ✅ No OTP required
+    });
+
+    await newUser.save();
+
+    // Generate token
+    const token = newUser.generateToken();
+
+    return res.status(201).json({
+      message: "Signup successful",
+      token: token,
+      role: newUser.role,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Error during signup", error });
+  }
+}
+
 // Login User
 async function Login(req, res) {
   const { email, password } = req.body;
@@ -126,4 +169,4 @@ async function Login(req, res) {
     return res.status(500).json({ message: "Error during login", error });
   }
 }
-module.exports = { SendOtp, VerifyOTP, Login };
+module.exports = { SendOtp, VerifyOTP, Login, SignUp };

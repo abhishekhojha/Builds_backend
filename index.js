@@ -23,7 +23,7 @@ const catalogRoutes = require("./routes/catalogRoutes");
 
 const PORT = process.env.PORT || 4000;
 app.get("/", (req, res) => {
-  res.send("You are on build's Homepage Go back");
+  res.send("You are on build's Homepage Go back New!");
 });
 app.use("/auth", AuthRoute);
 app.use("/catagories", CatagoryRoute);

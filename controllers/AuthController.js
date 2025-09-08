@@ -2,73 +2,67 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 require("dotenv").config();
-// Configure the nodemailer transporter
-const transporter = nodemailer.createTransport({
-  service: "Gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 async function SendOtp(req, res) {
   const { email, name, password, role } = req.body;
   if (!email || !name || !password || !role) {
     return res.status(400).json({
       message:
-        "hello All fields are required: email, name, password, and role.",
+        "All fields are required: email, name, password, and role.",
     });
   }
 
   try {
     const ExistingUser = await User.findOne({ email });
-    if (ExistingUser && ExistingUser != null) {
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const otpExpiry = new Date(Date.now() + 20 * 60 * 1000); // 20 minutes
+
+    if (ExistingUser) {
       if (ExistingUser.isEmailVerified) {
         return res
           .status(400)
-          .json({ message: "User with this email is verified" });
-      } else if (!ExistingUser.isEmailVerified) {
-        const otp = crypto.randomInt(100000, 999999).toString();
-        const otpExpiry = new Date(Date.now() + 20 * 60 * 1000);
+          .json({ message: "User with this email is already verified" });
+      } else {
+        // Update OTP and role for existing non-verified user
         await User.findByIdAndUpdate(ExistingUser._id, {
-          otp: otp,
-          otpExpiry: otpExpiry,
-          role: role
+          otp,
+          otpExpiry,
+          role,
         });
 
-        const mailOptions = {
+        // Send OTP via Resend
+        await resend.emails.send({
           from: process.env.EMAIL_USER,
           to: email,
           subject: "Your OTP for Signup",
-          text: `Your OTP is ${otp}. It will expire in 10 minutes.`,
-        };
+          text: `Your OTP is ${otp}. It will expire in 20 minutes.`,
+        });
 
-        await transporter.sendMail(mailOptions);
         return res.status(200).json({ message: "OTP sent to email" });
       }
     } else {
-      const otp = crypto.randomInt(100000, 999999).toString();
-      const otpExpiry = new Date(Date.now() + 20 * 60 * 1000);
+      // Create new user with OTP
       const newUser = new User({ email, name, password, role, otp, otpExpiry });
       await newUser.save();
-      // Send OTP via email
-      const mailOptions = {
+
+      // Send OTP via Resend
+      await resend.emails.send({
         from: process.env.EMAIL_USER,
         to: email,
         subject: "Your OTP for Signup",
         text: `Your OTP is ${otp}. It will expire in 20 minutes.`,
-      };
-
-      await transporter.sendMail(mailOptions);
+      });
 
       return res.status(200).json({ message: "OTP sent to email" });
     }
   } catch (error) {
-    return res.status(500).send(error);
+    return res.status(500).json({ message: "Error sending OTP", error });
   }
-
-  return res.status(500).send("There are some issues while sending issues");
 }
 
 async function VerifyOTP(req, res) {
@@ -79,7 +73,8 @@ async function VerifyOTP(req, res) {
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
-    // return
+
+    // Validate OTP
     if (user.verifyOTP(otp)) {
       await User.findByIdAndUpdate(user._id, {
         isEmailVerified: true,
@@ -88,6 +83,7 @@ async function VerifyOTP(req, res) {
       });
       return res.status(200).json({ message: "OTP verified, signup complete" });
     }
+
     return res.status(400).json({ message: "Invalid or expired OTP" });
   } catch (error) {
     return res
@@ -95,7 +91,6 @@ async function VerifyOTP(req, res) {
       .json({ message: "Error during OTP verification", error });
   }
 }
-
 
 async function SignUp(req, res) {
   const { email, name, password, role } = req.body;
@@ -105,18 +100,15 @@ async function SignUp(req, res) {
       message: "All fields are required: email, name, password, and role.",
     });
   }
-  console.log(email, name, password, role);
-  
+
   try {
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
         .status(400)
         .json({ message: "User with this email already exists" });
     }
-    
-    // Create new user with verified email
+
     const newUser = new User({
       email,
       name,
@@ -124,17 +116,16 @@ async function SignUp(req, res) {
       role,
       isEmailVerified: true,
       otp: "000000", // dummy
-      otpExpiry: new Date(), // dummy (expired immediately)
+      otpExpiry: new Date(), // dummy
     });
 
     await newUser.save();
 
-    // Generate token
     const token = newUser.generateToken();
 
     return res.status(201).json({
       message: "Signup successful",
-      token: token,
+      token,
       role: newUser.role,
     });
   } catch (error) {
@@ -142,7 +133,6 @@ async function SignUp(req, res) {
   }
 }
 
-// Login User
 async function Login(req, res) {
   const { email, password } = req.body;
 
@@ -156,20 +146,23 @@ async function Login(req, res) {
     if (!user.isEmailVerified) {
       return res
         .status(400)
-        .json({ message: "Account is not verified. Please verify your OTP." });
+        .json({ message: "Account not verified. Please verify your OTP." });
     }
 
-    // Compare password
     user.comparePassword(password, (err, isMatch) => {
       if (err || !isMatch)
-        return res.status(401).json({ message: "Password did not matched" });
-      const Token = user.generateToken();
-      return res
-        .status(201)
-        .json({ message: "Login Successful", token: Token, role: user.role });
+        return res.status(401).json({ message: "Password did not match" });
+
+      const token = user.generateToken();
+      return res.status(201).json({
+        message: "Login successful",
+        token,
+        role: user.role,
+      });
     });
   } catch (error) {
     return res.status(500).json({ message: "Error during login", error });
   }
 }
+
 module.exports = { SendOtp, VerifyOTP, Login, SignUp };
